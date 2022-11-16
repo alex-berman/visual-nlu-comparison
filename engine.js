@@ -30,10 +30,14 @@ const horizontalMargin = 10;
 var displayedItems = [];
 var pageWidth;
 var pageHeight;
+var globalTop;
+var globalLeft;
 
 function start() {
     pageWidth = document.body.clientWidth;
     pageHeight = document.body.clientHeight;
+    globalTop = (pageHeight - numRows * itemHeight) / 2;
+    globalLeft = (pageWidth - maxItemsPerRow * itemWidth) / 2;
 
     document.addEventListener("keydown", function(e) {
         e = e || window.event;
@@ -77,7 +81,7 @@ function placeItem(item, positionIndex) {
         count += numItemsInRow;
     }
     const column = positionIndex - count;
-    var leftOffset = (1 - row % 2) * itemWidth / 2;
-    item.style.top = row * itemHeight;
-    item.style.left = leftOffset + column * itemWidth + (column - 1) * horizontalMargin;
+    var rowLeft = (1 - row % 2) * itemWidth / 2;
+    item.style.top = globalTop + row * itemHeight;
+    item.style.left = globalLeft + rowLeft + column * itemWidth + (column - 1) * horizontalMargin;
 }
