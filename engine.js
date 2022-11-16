@@ -32,12 +32,14 @@ var pageWidth;
 var pageHeight;
 var globalTop;
 var globalLeft;
+var availablePositions;
 
 function start() {
     pageWidth = document.body.clientWidth;
     pageHeight = document.body.clientHeight;
     globalTop = (pageHeight - numRows * itemHeight) / 2;
     globalLeft = (pageWidth - maxItemsPerRow * itemWidth) / 2;
+    availablePositions = new Set([...Array(nlusInfo.length).keys()]);
 
     document.addEventListener("keydown", function(e) {
         e = e || window.event;
@@ -51,13 +53,13 @@ function proceed() {
     if(displayedItems.length < nlusInfo.length) {
         var nluCount = displayedItems.length;
         var nluInfo = nlusInfo[nluCount];
-        var item = createItem(nluInfo, nluCount);
+        var item = createItem(nluInfo);
         document.body.appendChild(item);
         displayedItems.push(item);
     }
 }
 
-function createItem(nlu, count) {
+function createItem(nlu) {
     var item = document.createElement("div");
     item.className = "item";
     item.style.width = itemWidth;
@@ -66,8 +68,16 @@ function createItem(nlu, count) {
     content.className = "center";
     content.innerHTML = nlu.name;
     item.appendChild(content);
-    placeItem(item, count);
+    var positionIndex = consumeAvailablePosition();
+    placeItem(item, positionIndex);
     return item;
+}
+
+function consumeAvailablePosition() {
+    var availablePositionsAsList = [...availablePositions.values()];
+    var position = availablePositionsAsList[Math.floor(Math.random() * availablePositionsAsList.length)];
+    availablePositions.delete(position);
+    return position;
 }
 
 function placeItem(item, positionIndex) {
