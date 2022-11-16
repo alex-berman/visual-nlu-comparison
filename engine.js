@@ -18,12 +18,14 @@ const nlusInfo = [
     {name: "Ada", href: "https://www.ada.cx/platform/conversational-ai"},
     {name: "Cognigy", href: "https://www.cognigy.com/products/cognigy-ai"},
     {name: "Ultimate", href: "https://www.cognigy.com/products/cognigy-ai"},
-    {name: "Sprinklr", href: "https://www.sprinklr.com/platform/"},
+    //{name: "Sprinklr", href: "https://www.sprinklr.com/platform/"},
 ];
 
-const numColumns = 7;
+const maxItemsPerRow = 6;
+const numRows = 3;
 const itemWidth = 200;
 const itemHeight = 200;
+const horizontalMargin = 10;
 
 var displayedItems = [];
 var pageWidth;
@@ -65,9 +67,17 @@ function createItem(nlu, count) {
 }
 
 function placeItem(item, positionIndex) {
-    var row = Math.floor(positionIndex / numColumns);
-    var column = positionIndex - row * numColumns;
-    console.log("row=" + row + ", column=" + column);
+    var row;
+    var count = 0;
+    for(row = 0; row < numRows; row++) {
+        let numItemsInRow = maxItemsPerRow - (1 - row % 2);
+        if(positionIndex < count + numItemsInRow) {
+            break;
+        }
+        count += numItemsInRow;
+    }
+    const column = positionIndex - count;
+    var leftOffset = (1 - row % 2) * itemWidth / 2;
     item.style.top = row * itemHeight;
-    item.style.left = column * itemWidth;
+    item.style.left = leftOffset + column * itemWidth + (column - 1) * horizontalMargin;
 }
