@@ -1,19 +1,32 @@
-const nlus = [
-    "Rasa",
-    "Snips",
+const nlusInfo = [
+    {name: "Rasa"},
+    {name: "Snips"},
 ];
 
-function start() {
-    var nlu = createItem(nlus[0]);
-    document.body.appendChild(nlu);
+var displayedItems = [];
 
-    nlu = createItem(nlus[1]);
-    document.body.appendChild(nlu);
+function start() {
+    document.addEventListener("keydown", function(e) {
+        e = e || window.event;
+        if(e.key == "ArrowRight") {
+            proceed();
+        }
+    });
 }
 
-function createItem(title) {
+function proceed() {
+    console.log("proceed");
+    if(displayedItems.length < nlusInfo.length) {
+        var nluCount = displayedItems.length;
+        var item = createItem(nlusInfo[nluCount]);
+        document.body.appendChild(item);
+        displayedItems.push(item);
+    }
+}
+
+function createItem(nlu) {
     var item = document.createElement("div");
     item.className = "item";
-    item.innerHTML = title;
+    item.innerHTML = nlu.name;
     return item;
 }
