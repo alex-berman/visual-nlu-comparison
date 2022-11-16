@@ -3,8 +3,6 @@ BODY {
 }
 
 .item {
-    width: 200px;
-    height: 200px;
     font-size: 30px;
     text-align: center;
     border-radius: 50%;

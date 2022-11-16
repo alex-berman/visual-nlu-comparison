@@ -21,7 +21,9 @@ const nlusInfo = [
     {name: "Sprinklr", href: "https://www.sprinklr.com/platform/"},
 ];
 
-const numRows = 3;
+const numColumns = 7;
+const itemWidth = 200;
+const itemHeight = 200;
 
 var displayedItems = [];
 var pageWidth;
@@ -52,6 +54,8 @@ function proceed() {
 function createItem(nlu, count) {
     var item = document.createElement("div");
     item.className = "item";
+    item.style.width = itemWidth;
+    item.style.height = itemHeight;
     var content = document.createElement("div");
     content.className = "center";
     content.innerHTML = nlu.name;
@@ -60,7 +64,10 @@ function createItem(nlu, count) {
     return item;
 }
 
-function placeItem(item, count) {
-    item.style.top = pageHeight / 2 - 200/2;
-    item.style.left = pageWidth / 2 - 200/2;
+function placeItem(item, positionIndex) {
+    var row = Math.floor(positionIndex / numColumns);
+    var column = positionIndex - row * numColumns;
+    console.log("row=" + row + ", column=" + column);
+    item.style.top = row * itemHeight;
+    item.style.left = column * itemWidth;
 }
