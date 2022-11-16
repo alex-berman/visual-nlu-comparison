@@ -1,0 +1,15 @@
+BODY {
+    background-color: black;
+}
+
+.item {
+    width: 200px;
+    height: 200px;
+    line-height: 200px;
+    font-size: 30px;
+    text-align: center;
+    border-radius: 50%;
+    background-color: #242;
+    color: #eee;
+    font-family: Lato;
+}
