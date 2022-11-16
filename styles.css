@@ -5,11 +5,20 @@ BODY {
 .item {
     width: 200px;
     height: 200px;
-    line-height: 200px;
     font-size: 30px;
     text-align: center;
     border-radius: 50%;
     background-color: #242;
     color: #eee;
     font-family: Lato;
+    position: absolute;
+}
+
+.center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
