@@ -40,8 +40,9 @@ var itemsWithoutContent = [];
 var itemCount = 0;
 
 const States = {
-    itemsWithContent: "itemsWithContent",
-    itemsWithoutContent: "itemsWithoutContent"
+    itemsWithContent: 0,
+    itemsWithoutContent: 1,
+    final: 2
 };
 var state = States.itemsWithContent;
 
@@ -61,7 +62,10 @@ function start() {
     document.addEventListener("keydown", function(e) {
         e = e || window.event;
         if(e.key == "ArrowRight") {
-            proceed();
+            proceedInState();
+        }
+        else if(e.key == "PageDown") {
+            proceedToNextState();
         }
     });
 }
@@ -132,23 +136,47 @@ function positionHasContent(row, column) {
     }
 }
 
-function proceed() {
+function proceedInState() {
     if(state == States.itemsWithContent) {
         if(itemCount < nlusInfo.length) {
-            itemsWithContent[itemCount].style.visibility = 'visible';
             itemCount++;
         }
         else {
-            state = States.itemsWithoutContent;
-            itemCount = 0;
-            proceed();
+            proceedToNextState();
         }
     }
     else if(state == States.itemsWithoutContent) {
         if(itemCount < itemsWithoutContent.length) {
-            itemsWithoutContent[itemCount].style.visibility = 'visible';
             itemCount++;
         }
+    }
+    updateScreen();
+}
+
+function updateScreen() {
+    if(state == States.itemsWithContent) {
+        for(let i = 0; i < itemsWithContent.length; i++) {
+            itemsWithContent[i].style.visibility = (i < itemCount) ? 'visible' : 'hidden';
+        }
+        itemsWithoutContent.forEach(item => { item.style.visibility = 'hidden'; });
+    }
+    else if(state == States.itemsWithoutContent) {
+        itemsWithContent.forEach(item => { item.style.visibility = 'visible'; });
+        for(let i = 0; i < itemsWithoutContent.length; i++) {
+            itemsWithoutContent[i].style.visibility = (i < itemCount) ? 'visible' : 'hidden';
+        }
+    }
+    else if(state == States.final) {
+        itemsWithContent.forEach(item => { item.style.visibility = 'visible'; });
+        itemsWithoutContent.forEach(item => { item.style.visibility = 'visible'; });
+    }
+}
+
+function proceedToNextState() {
+    if(state < Object.entries(States).length) {
+        state += 1;
+        itemCount = 0;
+        updateScreen();
     }
 }
 
