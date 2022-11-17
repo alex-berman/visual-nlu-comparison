@@ -102,10 +102,14 @@ function createItems() {
 
     function createEmptyItem() {
         var item = document.createElement("div");
-        item.className = "item";
+        item.className = "item withoutContent";
         item.style.width = itemWidth;
         item.style.height = itemHeight;
         item.style.visibility = "hidden";
+        var content = document.createElement("div");
+        content.className = "center";
+        content.innerHTML = "?";
+        item.appendChild(content);
         var position = consumeRandom(availablePositionsWithoutContent);
         placeItem(item, position.row, position.column);
         document.body.appendChild(item);

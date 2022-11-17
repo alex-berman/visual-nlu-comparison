@@ -12,6 +12,10 @@ BODY {
     position: absolute;
 }
 
+.withoutContent {
+    opacity: 0.8;
+}
+
 .center {
   margin: 0;
   position: absolute;
