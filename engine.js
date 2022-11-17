@@ -1,12 +1,9 @@
 const nlusInfo = [
-    // Open source
-    {name: "Rasa"},
-    {name: "Snips"},
-    {name: "ConvLab"},
-    {name: "DeepPavlov"},
-    {name: "Plato", href: "https://eng.uber.com/plato-research-dialogue-system/"},
-
-    // Proprietary
+    {name: "Rasa", openSource: true},
+    {name: "Snips", openSource: true},
+    {name: "ConvLab", openSource: true},
+    {name: "DeepPavlov", openSource: true},
+    {name: "Plato", openSource: true, href: "https://eng.uber.com/plato-research-dialogue-system/"},
     {name: "Dialogflow"},
     {name: "Wit.ai"},
     {name: "IBM Watson Assistant"},
@@ -38,11 +35,14 @@ var globalLeft;
 var itemsWithContent = [];
 var itemsWithoutContent = [];
 var itemCount = 0;
+var title;
 
 const States = {
     itemsWithContent: 0,
     itemsWithoutContent: 1,
-    final: 2
+    afterItemsWithoutContent: 2,
+    beforeCompare: 3,
+    compareOpenSource: 4
 };
 var state = States.itemsWithContent;
 
@@ -56,6 +56,11 @@ function start() {
     offsetForColumnsWithContent = Math.floor((numColumns - maxItemsPerRow) / 2) ;
     globalTop = -itemHeight / 2;
     globalLeft = -itemWidth;
+
+    title = document.getElementById("title");
+    title.style.fontSize = itemHeight * 0.2;
+    title.style.top = pageHeight - itemHeight * 0.4;
+    title.style.left = itemWidth * 0.2;
 
     createItems();
 
@@ -166,9 +171,23 @@ function updateScreen() {
             itemsWithoutContent[i].style.visibility = (i < itemCount) ? 'visible' : 'hidden';
         }
     }
-    else if(state == States.final) {
+    else if(state == States.afterItemsWithoutContent) {
         itemsWithContent.forEach(item => { item.style.visibility = 'visible'; });
         itemsWithoutContent.forEach(item => { item.style.visibility = 'visible'; });
+    }
+    else if(state == States.beforeCompare) {
+        itemsWithContent.forEach(item => { item.style.visibility = 'visible'; });
+        itemsWithoutContent.forEach(item => { item.style.visibility = 'hidden'; });
+    }
+    else if(state == States.compareOpenSource) {
+        for(let i = 0; i < nlusInfo.length; i++) {
+            var nluInfo = nlusInfo[i];
+            var item = itemsWithContent[i];
+            item.style.visibility = 'visible';
+            item.className = (nluInfo.openSource ? "item highlight" : "item dim");
+        }
+        itemsWithoutContent.forEach(item => { item.style.visibility = 'hidden'; });
+        title.innerHTML = "Open source";
     }
 }
 
