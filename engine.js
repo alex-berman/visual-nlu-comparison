@@ -51,10 +51,10 @@ function start() {
     itemHeight = pageHeight / (numRows - 1);
     itemWidth = itemHeight;
     fontSize = itemHeight * 0.14;
-    numColumns = Math.floor(pageWidth / pageHeight * numRows);
+    numColumns = Math.floor(pageWidth / pageHeight * numRows) + 1;
     offsetForColumnsWithContent = Math.floor((numColumns - maxItemsPerRow) / 2) ;
     globalTop = -itemHeight / 2;
-    globalLeft = -itemHeight / 2;
+    globalLeft = -itemWidth;
 
     createItems();
 
@@ -105,6 +105,7 @@ function createItems() {
         item.className = "item withoutContent";
         item.style.width = itemWidth;
         item.style.height = itemHeight;
+        item.style.fontSize = fontSize;
         item.style.visibility = "hidden";
         var content = document.createElement("div");
         content.className = "center";
