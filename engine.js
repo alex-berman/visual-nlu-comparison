@@ -22,7 +22,7 @@ const nlusInfo = [
 ];
 
 const maxItemsPerRow = 6;
-const numRows = 6;
+const numRows = 7;
 const numRowsWithContent = 3;
 const offsetForRowsWithContent = 2;
 const horizontalMargin = 10;
@@ -30,25 +30,33 @@ const horizontalMargin = 10;
 var numColumns;
 var itemWidth;
 var itemHeight;
-var displayedItems = [];
+var fontSize;
 var pageWidth;
 var pageHeight;
 var globalTop;
 var globalLeft;
-var availablePositionsWithoutContent = new Set();
-var availablePositionsWithContent = new Set();
+var itemsWithContent = [];
+var itemsWithoutContent = [];
+var itemCount = 0;
+
+const States = {
+    itemsWithContent: "itemsWithContent",
+    itemsWithoutContent: "itemsWithoutContent"
+};
+var state = States.itemsWithContent;
 
 function start() {
     pageWidth = document.body.clientWidth;
     pageHeight = document.body.clientHeight;
-    itemHeight = pageHeight / numRows;
+    itemHeight = pageHeight / (numRows - 1);
     itemWidth = itemHeight;
+    fontSize = itemHeight * 0.14;
     numColumns = Math.floor(pageWidth / pageHeight * numRows);
-    offsetForColumnsWithContent = Math.floor((numColumns - maxItemsPerRow) / 2);
+    offsetForColumnsWithContent = Math.floor((numColumns - maxItemsPerRow) / 2) ;
     globalTop = -itemHeight / 2;
-    globalLeft = 0;
+    globalLeft = -itemHeight / 2;
 
-    createAvailablePositions();
+    createItems();
 
     document.addEventListener("keydown", function(e) {
         e = e || window.event;
@@ -58,7 +66,9 @@ function start() {
     });
 }
 
-function createAvailablePositions() {
+function createItems() {
+    var availablePositionsWithoutContent = new Set();
+    var availablePositionsWithContent = new Set();
     for(let row = 0; row < numRows; row++) {
         for(let column = 0; column < numColumns; column++) {
             var position = {row: row, column: column};
@@ -69,6 +79,42 @@ function createAvailablePositions() {
                 availablePositionsWithoutContent.add(position);
             }
         }
+    }
+
+    function createItem(nlu) {
+        var item = document.createElement("div");
+        item.className = "item";
+        item.style.width = itemWidth;
+        item.style.height = itemHeight;
+        item.style.fontSize = fontSize;
+        item.style.visibility = "hidden";
+        var content = document.createElement("div");
+        content.className = "center";
+        content.innerHTML = nlu.name;
+        item.appendChild(content);
+        var position = consumeRandom(availablePositionsWithContent);
+        placeItem(item, position.row, position.column);
+        document.body.appendChild(item);
+        itemsWithContent.push(item);
+    }
+
+    nlusInfo.forEach(nluInfo => createItem(nluInfo));
+
+    function createEmptyItem() {
+        var item = document.createElement("div");
+        item.className = "item";
+        item.style.width = itemWidth;
+        item.style.height = itemHeight;
+        item.style.visibility = "hidden";
+        var position = consumeRandom(availablePositionsWithoutContent);
+        placeItem(item, position.row, position.column);
+        document.body.appendChild(item);
+        itemsWithoutContent.push(item);
+    }
+
+    var numPositionsWithoutContent = availablePositionsWithoutContent.size;
+    for(let i = 0; i < numPositionsWithoutContent; i++) {
+        createEmptyItem();
     }
 }
 
@@ -82,27 +128,23 @@ function positionHasContent(row, column) {
 }
 
 function proceed() {
-    if(displayedItems.length < nlusInfo.length) {
-        var nluCount = displayedItems.length;
-        var nluInfo = nlusInfo[nluCount];
-        var item = createItem(nluInfo);
-        document.body.appendChild(item);
-        displayedItems.push(item);
+    if(state == States.itemsWithContent) {
+        if(itemCount < nlusInfo.length) {
+            itemsWithContent[itemCount].style.visibility = 'visible';
+            itemCount++;
+        }
+        else {
+            state = States.itemsWithoutContent;
+            itemCount = 0;
+            proceed();
+        }
     }
-}
-
-function createItem(nlu) {
-    var item = document.createElement("div");
-    item.className = "item";
-    item.style.width = itemWidth;
-    item.style.height = itemHeight;
-    var content = document.createElement("div");
-    content.className = "center";
-    content.innerHTML = nlu.name;
-    item.appendChild(content);
-    var position = consumeRandom(availablePositionsWithContent);
-    placeItem(item, position.row, position.column);
-    return item;
+    else if(state == States.itemsWithoutContent) {
+        if(itemCount < itemsWithoutContent.length) {
+            itemsWithoutContent[itemCount].style.visibility = 'visible';
+            itemCount++;
+        }
+    }
 }
 
 function consumeRandom(set) {
@@ -114,6 +156,6 @@ function consumeRandom(set) {
 
 function placeItem(item, row, column) {
     var rowLeft = (1 - row % 2) * itemWidth / 2;
-    item.style.top = globalTop + (row + offsetForRowsWithContent) * itemHeight;
+    item.style.top = globalTop + row * itemHeight;
     item.style.left = globalLeft + rowLeft + column * itemWidth + (column - 1) * horizontalMargin;
 }
