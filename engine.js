@@ -23,19 +23,19 @@ const numRows = 7;
 const numRowsWithContent = 3;
 const offsetForRowsWithContent = 2;
 const horizontalMargin = 10;
+const aspectRatio = 16 / 9;
 
 var numColumns;
 var itemWidth;
 var itemHeight;
 var fontSize;
-var pageWidth;
-var pageHeight;
 var globalTop;
 var globalLeft;
 var itemsWithContent = [];
 var itemsWithoutContent = [];
 var itemCount = 0;
 var title;
+var root;
 
 const States = {
     itemsWithContent: 0,
@@ -47,19 +47,38 @@ const States = {
 var state = States.itemsWithContent;
 
 function start() {
-    pageWidth = document.body.clientWidth;
-    pageHeight = document.body.clientHeight;
-    itemHeight = pageHeight / (numRows - 1);
+    var pageAspectRatio = document.body.clientWidth / document.body.clientHeight;
+    var rootWidth;
+    var rootHeight;
+    var rootLeft = 0;
+    var rootTop = 0;
+
+    if(pageAspectRatio > aspectRatio) {
+        rootHeight = document.body.clientHeight;
+        rootWidth = rootHeight * aspectRatio;
+        rootLeft = (document.body.clientWidth - rootWidth) / 2;
+    }
+    else {
+        rootWidth = document.body.clientWidth;
+        rootHeight = rootWidth / aspectRatio;
+        rootTop = (document.body.clientHeight - rootHeight) / 2;
+    }
+    root = document.getElementById("root");
+    root.style.width = rootWidth;
+    root.style.height = rootHeight;
+    root.style.left = rootLeft;
+    root.style.top = rootTop;
+    itemHeight = rootHeight / (numRows - 1);
     itemWidth = itemHeight;
     fontSize = itemHeight * 0.14;
-    numColumns = Math.floor(pageWidth / pageHeight * numRows) + 1;
+    numColumns = Math.floor(rootWidth / rootHeight * numRows) + 1;
     offsetForColumnsWithContent = Math.floor((numColumns - maxItemsPerRow) / 2) ;
     globalTop = -itemHeight / 2;
     globalLeft = -itemWidth;
 
     title = document.getElementById("title");
     title.style.fontSize = itemHeight * 0.2;
-    title.style.top = pageHeight - itemHeight * 0.4;
+    title.style.top = rootHeight - itemHeight * 0.4;
     title.style.left = itemWidth * 0.2;
 
     createItems();
@@ -103,7 +122,7 @@ function createItems() {
         item.appendChild(content);
         var position = consumeRandom(availablePositionsWithContent);
         placeItem(item, position.row, position.column);
-        document.body.appendChild(item);
+        root.appendChild(item);
         itemsWithContent.push(item);
     }
 
@@ -122,7 +141,7 @@ function createItems() {
         item.appendChild(content);
         var position = consumeRandom(availablePositionsWithoutContent);
         placeItem(item, position.row, position.column);
-        document.body.appendChild(item);
+        root.appendChild(item);
         itemsWithoutContent.push(item);
     }
 

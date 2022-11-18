@@ -1,6 +1,13 @@
 BODY {
+    background-color: black;
+    overflow: hidden;
+    margin: 0;
+}
+
+#root {
     background-color: white;
     overflow: hidden;
+    position: absolute;
 }
 
 .item {
