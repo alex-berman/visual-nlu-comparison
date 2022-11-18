@@ -24,9 +24,9 @@ const numRowsWithContent = 3;
 const offsetForRowsWithContent = 2;
 const horizontalMargin = 10;
 const aspectRatio = 16 / 9;
-const backgroundColorHighlight = [238, 255, 238];
+const backgroundColorHighlight = [247, 255, 238];
 const backgroundColorDim = [170, 204, 170];
-const borderHighlight = 0.5;
+const borderHighlight = 1.2;
 const borderDim = 0;
 
 var numColumns;
@@ -236,7 +236,7 @@ function applyComparison(propertyName, titleText) {
             item.style.textShadow = "0 0 5px rgba(0,0,0,0.5)";
         }
         else {
-            item.style.border = borderDim + (borderHighlight - borderDim) * value + 'mm solid #080';
+            item.style.border = borderDim + (borderHighlight - borderDim) * value + 'mm solid #ee2';
             item.style.backgroundColor = backgroundColor(value);
         }
     }
