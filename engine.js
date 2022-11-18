@@ -86,6 +86,7 @@ function start() {
     title.style.top = rootHeight - itemHeight * 0.4;
     title.style.left = itemWidth * 0.2;
 
+    prepareComparisonData();
     createItems();
 
     document.addEventListener("keydown", function(e) {
@@ -94,7 +95,10 @@ function start() {
             proceedInState();
         }
         else if(e.key == "PageDown") {
-            proceedToNextState();
+            navigateAcrossStates(1);
+        }
+        else if(e.key == "PageUp") {
+            navigateAcrossStates(-1);
         }
     });
 }
@@ -183,38 +187,61 @@ function proceedInState() {
 }
 
 function updateScreen() {
+    title.innerHTML = "";
     if(state == States.itemsWithContent) {
         for(let i = 0; i < itemsWithContent.length; i++) {
+            resetStyle(itemsWithContent[i]);
             itemsWithContent[i].style.visibility = (i < itemCount) ? 'visible' : 'hidden';
         }
         itemsWithoutContent.forEach(item => { item.style.visibility = 'hidden'; });
     }
     else if(state == States.itemsWithoutContent) {
-        itemsWithContent.forEach(item => { item.style.visibility = 'visible'; });
+        itemsWithContent.forEach(item => { resetStyle(item); });
         for(let i = 0; i < itemsWithoutContent.length; i++) {
             itemsWithoutContent[i].style.visibility = (i < itemCount) ? 'visible' : 'hidden';
         }
     }
     else if(state == States.afterItemsWithoutContent) {
-        itemsWithContent.forEach(item => { item.style.visibility = 'visible'; });
+        itemsWithContent.forEach(item => { resetStyle(item); });
         itemsWithoutContent.forEach(item => { item.style.visibility = 'visible'; });
     }
     else if(state == States.beforeCompare) {
-        itemsWithContent.forEach(item => { item.style.visibility = 'visible'; });
+        itemsWithContent.forEach(item => { resetStyle(item); });
         itemsWithoutContent.forEach(item => { item.style.visibility = 'hidden'; });
     }
     else if(state == States.compareOpenSource) {
-        for(let i = 0; i < nlusInfo.length; i++) {
-            var nluInfo = nlusInfo[i];
-            var item = itemsWithContent[i];
-            var value = nluInfo.openSource;
-            item.style.visibility = 'visible';
+        applyComparison("openSource", "Open source");
+    }
+    else if(state == States.compareSupportedLanguages) {
+        applyComparison("languagesRelative", "Supported languages");
+    }
+}
+
+function resetStyle(item) {
+    item.style.border = "";
+    item.style.backgroundColor = "";
+    item.style.visibility = 'visible';
+    item.style.color = "";
+    item.style.textShadow = "";
+}
+
+function applyComparison(propertyName, titleText) {
+    for(let i = 0; i < nlusInfo.length; i++) {
+        var nluInfo = nlusInfo[i];
+        var item = itemsWithContent[i];
+        var value = nluInfo[propertyName];
+        resetStyle(item);
+        if(isNaN(value)) {
+            item.style.color = "transparent";
+            item.style.textShadow = "0 0 5px rgba(0,0,0,0.5)";
+        }
+        else {
             item.style.border = borderDim + (borderHighlight - borderDim) * value + 'mm solid #080';
             item.style.backgroundColor = backgroundColor(value);
         }
-        itemsWithoutContent.forEach(item => { item.style.visibility = 'hidden'; });
-        title.innerHTML = "Open source";
     }
+    itemsWithoutContent.forEach(item => { item.style.visibility = 'hidden'; });
+    title.innerHTML = titleText;
 }
 
 function backgroundColor(value) {
@@ -228,9 +255,10 @@ function backgroundColor(value) {
     return "rgb(" + r + "," + g + "," + b + ")";
 }
 
-function proceedToNextState() {
-    if(state < Object.entries(States).length) {
-        state += 1;
+function navigateAcrossStates(delta) {
+    const newState = Math.min(Math.max(0, state + delta), Object.entries(States).length - 1);
+    if(newState != state) {
+        state = newState;
         itemCount = 0;
         updateScreen();
     }
@@ -247,4 +275,13 @@ function placeItem(item, row, column) {
     var rowLeft = (1 - row % 2) * itemWidth / 2;
     item.style.top = globalTop + row * itemHeight;
     item.style.left = globalLeft + rowLeft + column * itemWidth + (column - 1) * horizontalMargin;
+}
+
+function prepareComparisonData() {
+    function setRelativeValues(absolutePropertyName, relativePropertyName) {
+        const absoluteValues = nlusInfo.map(item => item[absolutePropertyName]).filter(item => item);
+        const absoluteMax = absoluteValues.reduce((a, b) => Math.max(a, b), 0);
+        nlusInfo.forEach(item => { item[relativePropertyName] = item[absolutePropertyName] / absoluteMax});
+    }
+    setRelativeValues("languages", "languagesRelative");
 }
