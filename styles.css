@@ -23,15 +23,6 @@ BODY {
     opacity: 0.8;
 }
 
-.highlight {
-    border: 0.5mm solid #080;
-    background-color: #efe;
-}
-
-.dim {
-    background-color: #aca;
-}
-
 .center {
   margin: 0;
   position: absolute;

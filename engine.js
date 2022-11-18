@@ -1,20 +1,20 @@
 const nlusInfo = [
-    {name: "Rasa", openSource: true},
-    {name: "Snips", openSource: true},
-    {name: "ConvLab", openSource: true},
-    {name: "DeepPavlov", openSource: true},
-    {name: "Plato", openSource: true, href: "https://eng.uber.com/plato-research-dialogue-system/"},
-    {name: "Dialogflow"},
-    {name: "Wit.ai"},
-    {name: "IBM Watson Assistant"},
-    {name: "Amazon Lex"},
-    {name: "LUIS"},
-    {name: "Oracle Digital Assistant"},
-    {name: "SAP Conversational AI"},
-    {name: "Teneo"},
-    {name: "Ada", href: "https://www.ada.cx/platform/conversational-ai"},
-    {name: "Cognigy", href: "https://www.cognigy.com/products/cognigy-ai"},
-    {name: "Ultimate", href: "https://www.cognigy.com/products/cognigy-ai"},
+    {name: "Rasa", openSource: 1},
+    {name: "Snips", openSource: 1, languages: 9},
+    {name: "ConvLab", openSource: 1},
+    {name: "DeepPavlov", openSource: 1},
+    {name: "Plato", openSource: 1, href: "https://eng.uber.com/plato-research-dialogue-system/"},
+    {name: "Dialogflow", openSource: 0, languages: 122},
+    {name: "Wit.ai", openSource: 0, languages: 131},
+    {name: "IBM Watson Assistant", openSource: 0, languages: 13},
+    {name: "Amazon Lex", openSource: 0, languages: 13},
+    {name: "LUIS", openSource: 0, languages: 20},
+    {name: "Oracle Digital Assistant", openSource: 0},
+    {name: "SAP Conversational AI", openSource: 0},
+    {name: "Teneo", openSource: 0},
+    {name: "Ada", openSource: 0, href: "https://www.ada.cx/platform/conversational-ai"},
+    {name: "Cognigy", openSource: 0, href: "https://www.cognigy.com/products/cognigy-ai"},
+    {name: "Ultimate", openSource: 0, href: "https://www.cognigy.com/products/cognigy-ai"},
     //{name: "Sprinklr", href: "https://www.sprinklr.com/platform/"},
 ];
 
@@ -24,6 +24,10 @@ const numRowsWithContent = 3;
 const offsetForRowsWithContent = 2;
 const horizontalMargin = 10;
 const aspectRatio = 16 / 9;
+const backgroundColorHighlight = [238, 255, 238];
+const backgroundColorDim = [170, 204, 170];
+const borderHighlight = 0.5;
+const borderDim = 0;
 
 var numColumns;
 var itemWidth;
@@ -42,7 +46,8 @@ const States = {
     itemsWithoutContent: 1,
     afterItemsWithoutContent: 2,
     beforeCompare: 3,
-    compareOpenSource: 4
+    compareOpenSource: 4,
+    compareSupportedLanguages: 5
 };
 var state = States.itemsWithContent;
 
@@ -202,12 +207,25 @@ function updateScreen() {
         for(let i = 0; i < nlusInfo.length; i++) {
             var nluInfo = nlusInfo[i];
             var item = itemsWithContent[i];
+            var value = nluInfo.openSource;
             item.style.visibility = 'visible';
-            item.className = (nluInfo.openSource ? "item highlight" : "item dim");
+            item.style.border = borderDim + (borderHighlight - borderDim) * value + 'mm solid #080';
+            item.style.backgroundColor = backgroundColor(value);
         }
         itemsWithoutContent.forEach(item => { item.style.visibility = 'hidden'; });
         title.innerHTML = "Open source";
     }
+}
+
+function backgroundColor(value) {
+    function interpolateComponent(index) {
+        return backgroundColorDim[index] + Math.round(
+            backgroundColorHighlight[index] - backgroundColorDim[index]) * value;
+    }
+    const r = interpolateComponent(0);
+    const g = interpolateComponent(1);
+    const b = interpolateComponent(2);
+    return "rgb(" + r + "," + g + "," + b + ")";
 }
 
 function proceedToNextState() {
