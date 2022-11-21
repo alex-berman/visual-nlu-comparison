@@ -1,12 +1,12 @@
 const nlusInfo = [
-    {name: "Rasa", openSource: 1},
-    {name: "Snips", openSource: 1, languages: 9},
+    {name: "Rasa", openSource: 1, semanticRoles: 0.5},
+    {name: "Snips", openSource: 1, languages: 9, semanticRoles: 1},
     {name: "ConvLab", openSource: 1},
     {name: "DeepPavlov", openSource: 1},
     {name: "Plato", openSource: 1, href: "https://eng.uber.com/plato-research-dialogue-system/"},
-    {name: "Dialogflow", openSource: 0, languages: 122},
-    {name: "Wit.ai", openSource: 0, languages: 131},
-    {name: "IBM Watson Assistant", openSource: 0, languages: 13},
+    {name: "Dialogflow", openSource: 0, languages: 122, semanticRoles: 1},
+    {name: "Wit.ai", openSource: 0, languages: 131, semanticRoles: 1},
+    {name: "IBM Watson Assistant", openSource: 0, languages: 13, semanticRoles: 0},
     {name: "Amazon Lex", openSource: 0, languages: 13},
     {name: "LUIS", openSource: 0, languages: 20},
     {name: "Oracle Digital Assistant", openSource: 0},
@@ -49,7 +49,8 @@ const States = {
     afterItemsWithoutContent: 2,
     beforeCompare: 3,
     compareOpenSource: 4,
-    compareSupportedLanguages: 5
+    compareSupportedLanguages: 5,
+    compareSemanticRoles: 6
 };
 var state = States.itemsWithContent;
 
@@ -249,6 +250,9 @@ function updateScreen() {
     }
     else if(state == States.compareSupportedLanguages) {
         applyComparison("languagesRelative", "Supported languages", "languages");
+    }
+    else if(state == States.compareSemanticRoles) {
+        applyComparison("semanticRoles", "Semantic roles", null);
     }
 }
 
