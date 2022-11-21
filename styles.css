@@ -19,6 +19,17 @@ BODY {
     position: absolute;
 }
 
+.itemSubText {
+    color: #666;
+    font-family: Lexend;
+  margin: 0;
+  position: absolute;
+  top: 90%;
+  left: 50%;
+  -ms-transform: translate(-50%, -90%);
+  transform: translate(-50%, -90%);
+}
+
 .withoutContent {
     opacity: 0.8;
 }

@@ -32,10 +32,12 @@ const borderDim = 0;
 var numColumns;
 var itemWidth;
 var itemHeight;
-var fontSize;
+var nameFontSize;
+var subTextFontSize;
 var globalTop;
 var globalLeft;
 var itemsWithContent = [];
+var itemSubTexts = [];
 var itemsWithoutContent = [];
 var itemCount = 0;
 var title;
@@ -75,7 +77,8 @@ function start() {
     root.style.top = rootTop;
     itemHeight = rootHeight / (numRows - 1);
     itemWidth = itemHeight;
-    fontSize = itemHeight * 0.14;
+    nameFontSize = itemHeight * 0.14;
+    subTextFontSizeFontSize = itemHeight * 0.07;
     numColumns = Math.floor(rootWidth / rootHeight * numRows) + 1;
     offsetForColumnsWithContent = Math.floor((numColumns - maxItemsPerRow) / 2) ;
     globalTop = -itemHeight / 2;
@@ -119,20 +122,40 @@ function createItems() {
     }
 
     function createItem(nlu) {
+        function createNameDiv() {
+            var div = document.createElement("div");
+            div.className = "center";
+            div.style.fontSize = nameFontSize;
+            div.innerHTML = nlu.name;
+            return div;
+        }
+
+        function createSubTextDiv() {
+            var div = document.createElement("div");
+            div.className = "itemSubText";
+            div.style.fontSize = subTextFontSize;
+            return div;
+        }
+
+        function createContent() {
+            var content = document.createElement("div");
+            content.className = "center";
+            return content;
+        }
+
         var item = document.createElement("div");
+        var subText = createSubTextDiv();
         item.className = "item";
         item.style.width = itemWidth;
         item.style.height = itemHeight;
-        item.style.fontSize = fontSize;
         item.style.visibility = "hidden";
-        var content = document.createElement("div");
-        content.className = "center";
-        content.innerHTML = nlu.name;
-        item.appendChild(content);
+        item.appendChild(createNameDiv());
+        item.appendChild(subText);
         var position = consumeRandom(availablePositionsWithContent);
         placeItem(item, position.row, position.column);
         root.appendChild(item);
         itemsWithContent.push(item);
+        itemSubTexts.push(subText);
     }
 
     nlusInfo.forEach(nluInfo => createItem(nluInfo));
@@ -142,7 +165,7 @@ function createItems() {
         item.className = "item withoutContent";
         item.style.width = itemWidth;
         item.style.height = itemHeight;
-        item.style.fontSize = fontSize;
+        item.style.fontSize = nameFontSize;
         item.style.visibility = "hidden";
         var content = document.createElement("div");
         content.className = "center";
@@ -196,34 +219,45 @@ function updateScreen() {
     title.innerHTML = "";
     if(state == States.itemsWithContent) {
         for(let i = 0; i < itemsWithContent.length; i++) {
-            resetStyle(itemsWithContent[i]);
+            resetItem(i);
             itemsWithContent[i].style.visibility = (i < itemCount) ? 'visible' : 'hidden';
         }
         itemsWithoutContent.forEach(item => { item.style.visibility = 'hidden'; });
     }
     else if(state == States.itemsWithoutContent) {
-        itemsWithContent.forEach(item => { resetStyle(item); });
+        for(let i = 0; i < itemsWithContent.length; i++) {
+            resetItem(i);
+        }
         for(let i = 0; i < itemsWithoutContent.length; i++) {
             itemsWithoutContent[i].style.visibility = (i < itemCount) ? 'visible' : 'hidden';
         }
     }
     else if(state == States.afterItemsWithoutContent) {
-        itemsWithContent.forEach(item => { resetStyle(item); });
+        for(let i = 0; i < itemsWithContent.length; i++) {
+            resetItem(i);
+        }
         itemsWithoutContent.forEach(item => { item.style.visibility = 'visible'; });
     }
     else if(state == States.beforeCompare) {
-        itemsWithContent.forEach(item => { resetStyle(item); });
+        for(let i = 0; i < itemsWithContent.length; i++) {
+            resetItem(i);
+        }
         itemsWithoutContent.forEach(item => { item.style.visibility = 'hidden'; });
     }
     else if(state == States.compareOpenSource) {
-        applyComparison("openSource", "Open source");
+        applyComparison("openSource", "Open source", null);
     }
     else if(state == States.compareSupportedLanguages) {
-        applyComparison("languagesRelative", "Supported languages");
+        applyComparison("languagesRelative", "Supported languages", "languages");
     }
 }
 
-function resetStyle(item) {
+function resetItem(index) {
+    resetItemStyle(itemsWithContent[index]);
+    itemSubTexts[index].innerHTML = "";
+}
+
+function resetItemStyle(item) {
     item.style.border = "";
     item.style.backgroundColor = "";
     item.style.visibility = 'visible';
@@ -231,12 +265,12 @@ function resetStyle(item) {
     item.style.textShadow = "";
 }
 
-function applyComparison(propertyName, titleText) {
+function applyComparison(propertyName, titleText, subTextPropertyName) {
     for(let i = 0; i < nlusInfo.length; i++) {
         var nluInfo = nlusInfo[i];
         var item = itemsWithContent[i];
         var value = nluInfo[propertyName];
-        resetStyle(item);
+        resetItem(i);
         if(isNaN(value)) {
             item.style.color = "transparent";
             item.style.textShadow = "0 0 5px rgba(0,0,0,0.5)";
@@ -244,6 +278,9 @@ function applyComparison(propertyName, titleText) {
         else {
             item.style.border = borderDim + (borderHighlight - borderDim) * value + 'mm solid #ee2';
             item.style.backgroundColor = backgroundColor(value);
+            if(subTextPropertyName) {
+                itemSubTexts[i].innerHTML = nluInfo[subTextPropertyName];
+            }
         }
     }
     itemsWithoutContent.forEach(item => { item.style.visibility = 'hidden'; });
