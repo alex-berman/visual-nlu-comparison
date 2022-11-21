@@ -1,14 +1,14 @@
 const nlusInfo = [
-    {name: "Rasa", openSource: 1, semanticRoles: 0.5},
+    {name: "Rasa", openSource: 1, semanticRoles: 0.5, intentF1: 0.863},
     {name: "Snips", openSource: 1, languages: 9, semanticRoles: 1},
     {name: "ConvLab", openSource: 1},
     {name: "DeepPavlov", openSource: 1},
     {name: "Plato", openSource: 1, href: "https://eng.uber.com/plato-research-dialogue-system/"},
-    {name: "Dialogflow", openSource: 0, languages: 122, semanticRoles: 1},
+    {name: "Dialogflow", openSource: 0, languages: 122, semanticRoles: 1, intentF1: 0.864},
     {name: "Wit.ai", openSource: 0, languages: 131, semanticRoles: 1},
-    {name: "IBM Watson Assistant", openSource: 0, languages: 13, semanticRoles: 0},
+    {name: "IBM Watson Assistant", openSource: 0, languages: 13, semanticRoles: 0, intentF1: 0.882},
     {name: "Amazon Lex", openSource: 0, languages: 13},
-    {name: "LUIS", openSource: 0, languages: 20},
+    {name: "LUIS", openSource: 0, languages: 20, intentF1: 0.855},
     {name: "Oracle Digital Assistant", openSource: 0},
     {name: "SAP Conversational AI", openSource: 0},
     {name: "Teneo", openSource: 0},
@@ -50,7 +50,8 @@ const States = {
     beforeCompare: 3,
     compareOpenSource: 4,
     compareSupportedLanguages: 5,
-    compareSemanticRoles: 6
+    compareSemanticRoles: 6,
+    compareIntentF1: 7
 };
 var state = States.itemsWithContent;
 
@@ -254,6 +255,9 @@ function updateScreen() {
     else if(state == States.compareSemanticRoles) {
         applyComparison("semanticRoles", "Semantic roles", null);
     }
+    else if(state == States.compareIntentF1) {
+        applyComparison("intentF1Relative", "Performance: Intent classification", "intentF1");
+    }
 }
 
 function resetItem(index) {
@@ -328,8 +332,12 @@ function placeItem(item, row, column) {
 function prepareComparisonData() {
     function setRelativeValues(absolutePropertyName, relativePropertyName) {
         const absoluteValues = nlusInfo.map(item => item[absolutePropertyName]).filter(item => item);
+        const absoluteMin = absoluteValues.reduce((a, b) => Math.min(a, b), Infinity);
         const absoluteMax = absoluteValues.reduce((a, b) => Math.max(a, b), 0);
-        nlusInfo.forEach(item => { item[relativePropertyName] = item[absolutePropertyName] / absoluteMax});
+        nlusInfo.forEach(item => {
+            item[relativePropertyName] = (item[absolutePropertyName] - absoluteMin) / (absoluteMax - absoluteMin)
+        });
     }
     setRelativeValues("languages", "languagesRelative");
+    setRelativeValues("intentF1", "intentF1Relative");
 }
