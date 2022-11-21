@@ -26,8 +26,8 @@ const horizontalMargin = 10;
 const aspectRatio = 16 / 9;
 const backgroundColorHighlight = [247, 255, 238];
 const backgroundColorDim = [170, 204, 170];
-const borderHighlight = 1.2;
-const borderDim = 0;
+const outlineHighlight = 1.2;
+const outlineDim = 0;
 
 var numColumns;
 var itemWidth;
@@ -258,7 +258,7 @@ function resetItem(index) {
 }
 
 function resetItemStyle(item) {
-    item.style.border = "";
+    item.style.outline = "";
     item.style.backgroundColor = "";
     item.style.visibility = 'visible';
     item.style.color = "";
@@ -276,7 +276,7 @@ function applyComparison(propertyName, titleText, subTextPropertyName) {
             item.style.textShadow = "0 0 5px rgba(0,0,0,0.5)";
         }
         else {
-            item.style.border = borderDim + (borderHighlight - borderDim) * value + 'mm solid #ee2';
+            item.style.outline = outlineDim + (outlineHighlight - outlineDim) * value + 'mm solid #ee2';
             item.style.backgroundColor = backgroundColor(value);
             if(subTextPropertyName) {
                 itemSubTexts[i].innerHTML = nluInfo[subTextPropertyName];
