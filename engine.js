@@ -278,6 +278,7 @@ function applyComparison(propertyName, titleText, subTextPropertyName) {
         if(isNaN(value)) {
             item.style.color = "transparent";
             item.style.textShadow = "0 0 5px rgba(0,0,0,0.5)";
+            item.style.backgroundColor = backgroundColor(0.2);
         }
         else {
             item.style.outline = outlineDim + (outlineHighlight - outlineDim) * value + 'mm solid #ee2';
