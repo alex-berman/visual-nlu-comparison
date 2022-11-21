@@ -1,14 +1,14 @@
 const nlusInfo = [
-    {name: "Rasa", openSource: 1, semanticRoles: 0.5, intentF1: 0.863},
-    {name: "Snips", openSource: 1, languages: 9, semanticRoles: 1},
+    {name: "Rasa", openSource: 1, semanticRoles: 0.5, intentF1: 0.863, calibration: 0.51024},
+    {name: "Snips", openSource: 1, languages: 9, semanticRoles: 1, calibration: 0.50669},
     {name: "ConvLab", openSource: 1},
     {name: "DeepPavlov", openSource: 1},
     {name: "Plato", openSource: 1, href: "https://eng.uber.com/plato-research-dialogue-system/"},
     {name: "Dialogflow", openSource: 0, languages: 122, semanticRoles: 1, intentF1: 0.864},
     {name: "Wit.ai", openSource: 0, languages: 131, semanticRoles: 1},
-    {name: "IBM Watson Assistant", openSource: 0, languages: 13, semanticRoles: 0, intentF1: 0.882},
+    {name: "IBM Watson Assistant", openSource: 0, languages: 13, semanticRoles: 0, intentF1: 0.882, calibration: 0.50838},
     {name: "Amazon Lex", openSource: 0, languages: 13},
-    {name: "LUIS", openSource: 0, languages: 20, intentF1: 0.855},
+    {name: "LUIS", openSource: 0, languages: 20, intentF1: 0.855, calibration: 0.50935},
     {name: "Oracle Digital Assistant", openSource: 0},
     {name: "SAP Conversational AI", openSource: 0},
     {name: "Teneo", openSource: 0},
@@ -51,7 +51,8 @@ const States = {
     compareOpenSource: 4,
     compareSupportedLanguages: 5,
     compareSemanticRoles: 6,
-    compareIntentF1: 7
+    compareIntentF1: 7,
+    compareCalibration: 8,
 };
 var state = States.itemsWithContent;
 
@@ -256,7 +257,10 @@ function updateScreen() {
         applyComparison("semanticRoles", "Semantic roles", null);
     }
     else if(state == States.compareIntentF1) {
-        applyComparison("intentF1Relative", "Performance: Intent classification", "intentF1");
+        applyComparison("intentF1Relative", "Performance (intent classification)", "intentF1");
+    }
+    else if(state == States.compareCalibration) {
+        applyComparison("calibrationRelative", "Calibration (intent classification)", "calibration");
     }
 }
 
@@ -340,4 +344,5 @@ function prepareComparisonData() {
     }
     setRelativeValues("languages", "languagesRelative");
     setRelativeValues("intentF1", "intentF1Relative");
+    setRelativeValues("calibration", "calibrationRelative");
 }
