@@ -175,13 +175,19 @@ function proceedInState() {
             itemCount++;
         }
         else {
-            proceedToNextState();
+            navigateAcrossStates(1);
         }
     }
     else if(state == States.itemsWithoutContent) {
         if(itemCount < itemsWithoutContent.length) {
             itemCount++;
         }
+        else {
+            navigateAcrossStates(1);
+        }
+    }
+    else {
+        navigateAcrossStates(1);
     }
     updateScreen();
 }
