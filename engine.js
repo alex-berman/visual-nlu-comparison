@@ -1,13 +1,13 @@
 const nlusInfo = [
-    {name: "Rasa", openSource: 1, semanticRoles: 0.5, intentF1: 0.863, calibration: 0.51024, hostAnywhere: 1},
-    {name: "Snips", openSource: 1, languages: 9, semanticRoles: 1, calibration: 0.50669, hostAnywhere: 1},
+    {name: "Rasa", openSource: 1, semanticRoles: 0.5, intentF1: 0.863, calibration: 0.51024, hostAnywhere: 1, literal: 0},
+    {name: "Snips", openSource: 1, languages: 9, semanticRoles: 1, calibration: 0.50669, hostAnywhere: 1, literal: 0},
     {name: "ConvLab", openSource: 1, hostAnywhere: 1},
     {name: "DeepPavlov", openSource: 1, hostAnywhere: 1},
     {name: "Plato", openSource: 1, href: "https://eng.uber.com/plato-research-dialogue-system/", hostAnywhere: 1},
-    {name: "Dialogflow", openSource: 0, languages: 122, semanticRoles: 1, intentF1: 0.864},
-    {name: "Wit.ai", openSource: 0, languages: 131, semanticRoles: 1, hostAnywhere: 0},
+    {name: "Dialogflow", openSource: 0, languages: 122, semanticRoles: 1, intentF1: 0.864, literal: 1},
+    {name: "Wit.ai", openSource: 0, languages: 131, semanticRoles: 1, hostAnywhere: 0, literal: 1},
     {name: "IBM Watson Assistant", openSource: 0, languages: 13, semanticRoles: 0, intentF1: 0.882, calibration: 0.50838, hostAnywhere: 1},
-    {name: "Amazon Lex", openSource: 0, languages: 13},
+    {name: "Amazon Lex", openSource: 0, languages: 13, literal: 0},
     {name: "LUIS", openSource: 0, languages: 20, intentF1: 0.855, calibration: 0.50935},
     {name: "Oracle Digital Assistant", openSource: 0},
     {name: "SAP Conversational AI", openSource: 0},
@@ -51,9 +51,10 @@ const States = {
     compareOpenSource: 4,
     compareSupportedLanguages: 5,
     compareSemanticRoles: 6,
-    compareIntentF1: 7,
-    compareCalibration: 8,
-    compareHostAnywhere: 9
+    compareLiteralEntities: 7,
+    compareIntentF1: 8,
+    compareCalibration: 9,
+    compareHostAnywhere: 10
 };
 var state = States.itemsWithContent;
 
@@ -261,6 +262,9 @@ function updateScreen() {
     }
     else if(state == States.compareSemanticRoles) {
         applyComparison("semanticRoles", "Semantic roles", null);
+    }
+    else if(state == States.compareLiteralEntities) {
+        applyComparison("literal", "Literal entities", null);
     }
     else if(state == States.compareIntentF1) {
         applyComparison("intentF1Relative", "Performance (intent classification)", "intentF1");
