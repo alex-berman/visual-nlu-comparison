@@ -99,7 +99,10 @@ function start() {
     document.addEventListener("keydown", function(e) {
         e = e || window.event;
         if(e.key == "ArrowRight") {
-            proceedInState();
+            navigateWithinState(1);
+        }
+        else if(e.key == "ArrowLeft") {
+            navigateWithinState(-1);
         }
         else if(e.key == "PageDown") {
             navigateAcrossStates(1);
@@ -196,23 +199,27 @@ function positionHasContent(row, column) {
     }
 }
 
-function proceedInState() {
+function navigateWithinState(delta) {
     if(state == States.itemsWithContent) {
-        if(itemCount < nlusInfo.length) {
-            itemCount++;
+        itemCount += delta;
+        if(itemCount < 0) {
+            navigateAcrossStates(-1);
         }
-        else {
+        else if(itemCount >= itemsWithContent.length) {
             navigateAcrossStates(1);
         }
     }
     else if(state == States.itemsWithoutContent) {
-        itemCount += 5;
-        if(itemCount >= itemsWithoutContent.length) {
+        itemCount += 5 * delta;
+        if(itemCount < 0) {
+            navigateAcrossStates(-1);
+        }
+        else if(itemCount >= itemsWithoutContent.length) {
             navigateAcrossStates(1);
         }
     }
     else {
-        navigateAcrossStates(1);
+        navigateAcrossStates(delta);
     }
     updateScreen();
 }
