@@ -206,10 +206,8 @@ function proceedInState() {
         }
     }
     else if(state == States.itemsWithoutContent) {
-        if(itemCount < itemsWithoutContent.length) {
-            itemCount++;
-        }
-        else {
+        itemCount += 5;
+        if(itemCount >= itemsWithoutContent.length) {
             navigateAcrossStates(1);
         }
     }
